@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Expedia;
 using Rhino.Mocks;
@@ -50,5 +51,54 @@ namespace ExpediaTest
 		{
 			new Car(-5);
 		}
+
+        [TestMethod]
+        public void TestThatCarDoesGetLocationFromTheDatabase()
+        {
+            IDatabase mockDB = mocks.StrictMock<IDatabase>();
+
+            String carLocation = "pi";
+            String otherCarLocation = "cyberspace";
+
+            Expect.Call(mockDB.getCarLocation(314)).Return(carLocation);
+            Expect.Call(mockDB.getCarLocation(42)).Return(otherCarLocation);
+
+            mocks.ReplayAll();
+
+            Car target = new Car(2);
+            target.Database = mockDB;
+
+            String result;
+
+            result = target.getCarLocation(314);
+            Assert.AreEqual(carLocation, result);
+
+            result = target.getCarLocation(42);
+            Assert.AreEqual(otherCarLocation, result);
+
+            mocks.VerifyAll();
+        }
+
+        [TestMethod]
+        public void TestThatCareDoesGetMileageFromDatabase()
+        {
+            IDatabase mockDB = mocks.StrictMock<IDatabase>();
+            Int32 Mileage = 525600;
+            
+            Expect.Call(mockDB.Miles).PropertyBehavior();
+
+            mocks.ReplayAll();
+
+            mockDB.Miles = Mileage;
+
+            var target = new Car(2);
+            target.Database = mockDB;
+
+            int mileage = target.Mileage;
+            Assert.AreEqual(mileage, Mileage);
+
+            mocks.VerifyAll();
+        }
+
 	}
 }
